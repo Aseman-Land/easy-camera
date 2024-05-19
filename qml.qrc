@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>icon.png</file>
+        <file>CursorWindow.qml</file>
+        <file>SettingsDialog.qml</file>
+        <file>cursor.png</file>
     </qresource>
 </RCC>

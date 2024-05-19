@@ -10,8 +10,8 @@ import QtCore
 
 Window {
     id: mwin
-    width: parseInt(sizeCombo.currentText) + margins*2
-    height: parseInt(sizeCombo.currentText) + margins*2
+    width: parseInt(settingsDialog.sizeValue) + margins*2
+    height: parseInt(settingsDialog.sizeValue) + margins*2
     visible: true
     title: qsTr("Easy Camera")
     color: "#00000000"
@@ -26,12 +26,12 @@ Window {
 
     Settings {
         id: settings
-        property alias size: sizeCombo.currentIndex
-        property alias camera: deviceCombo.currentIndex
-        property alias audio: audioCombo.currentIndex
+        property alias size: settingsDialog.size
+        property alias camera: settingsDialog.camera
+        property alias audio: settingsDialog.audio
         property alias windowX: mwin.x
         property alias windowY: mwin.y
-        property alias output: outputLocation.text
+        property alias output: settingsDialog.output
     }
 
     MediaDevices {
@@ -44,16 +44,17 @@ Window {
             active: true
         }
         audioInput: AudioInput {
+            device: settingsDialog.audioValue
         }
         recorder: MediaRecorder {
             id: recorder
-            outputLocation: "file://" + outputLocation.text + "/easy_camera-" + (new Date).getTime() + ".mp4"
+            outputLocation: "file://" + settingsDialog.output + "/easy_camera-" + (new Date).getTime() + ".mp4"
         }
     }
 
     CaptureSession {
         camera: Camera {
-            cameraDevice: deviceCombo.currentValue
+            cameraDevice: settingsDialog.cameraValue
             whiteBalanceMode: Camera.WhiteBalanceAuto
             exposureMode: Camera.ExposureAuto
             active: true
@@ -174,100 +175,23 @@ Window {
                 text: recording? qsTr("Stop") : qsTr("Record")
                 Material.accent: recording? Material.Red : Material.Cyan
                 onClicked: {
-                    if (recording)
+                    if (recording) {
                         recorder.stop();
-                    else
+                        cursorWindow.close();
+                    } else {
                         recorder.record();
+                        cursorWindow.showMaximized();
+                    }
                 }
             }
         }
     }
 
-    Window {
+    SettingsDialog {
         id: settingsDialog
-        title: qsTr("Settings")
-        width: 400
-        height: 300
-        flags: Qt.Dialog
-
-        Material.theme: Material.Dark
-        Material.background: "#31363b"
-
-        Page {
-            anchors.fill: parent
-
-            ColumnLayout {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: 30
-                anchors.topMargin: 10
-
-                RowLayout {
-                    Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Size")
-                        font.bold: true
-                    }
-
-                    ComboBox {
-                        id: sizeCombo
-                        Layout.preferredWidth: 200
-                        Layout.preferredHeight: 50
-                        model: [64, 128, 192, 256, 384, 512, 768, 1024]
-                        currentIndex: 4
-                        displayText: qsTr("%1px").arg(currentText)
-                    }
-                }
-
-                RowLayout {
-                    Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Camera Device")
-                        font.bold: true
-                    }
-
-                    ComboBox {
-                        id: deviceCombo
-                        Layout.preferredWidth: 200
-                        Layout.preferredHeight: 50
-                        model: mediaDevices.videoInputs
-                        textRole: "description"
-                    }
-                }
-
-                RowLayout {
-                    Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Audio Device")
-                        font.bold: true
-                    }
-
-                    ComboBox {
-                        id: audioCombo
-                        Layout.preferredWidth: 200
-                        Layout.preferredHeight: 50
-                        model: mediaDevices.audioInputs
-                        textRole: "description"
-                    }
-                }
-
-                RowLayout {
-                    Label {
-                        Layout.fillWidth: true
-                        text: qsTr("Output")
-                        font.bold: true
-                    }
-
-                    TextField {
-                        id: outputLocation
-                        Layout.preferredWidth: 200
-                        Layout.preferredHeight: 50
-                        text: homePath
-                    }
-                }
-            }
-        }
     }
 
+    CursorWindow {
+        id: cursorWindow
+    }
 }

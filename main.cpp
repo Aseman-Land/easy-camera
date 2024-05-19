@@ -4,6 +4,8 @@
 #include <QDir>
 #include <QIcon>
 
+#include "cursortracker.h"
+
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -14,6 +16,8 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("land.aseman");
     app.setApplicationName("Easy Camera");
     app.setWindowIcon(QIcon(":/icon.png"));
+
+    qmlRegisterType<CursorTracker>("EasyCamera", 1, 0, "CursorTracker");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("homePath", QDir::homePath());

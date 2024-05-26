@@ -48,7 +48,6 @@ Window {
         }
         recorder: MediaRecorder {
             id: recorder
-            outputLocation: "file://" + settingsDialog.output + "/easy_camera-" + (new Date).getTime() + ".mp4"
         }
     }
 
@@ -179,6 +178,7 @@ Window {
                         recorder.stop();
                         cursorWindow.close();
                     } else {
+                        recorder.outputLocation = "file://" + settingsDialog.output + "/easy_camera-" + (new Date).getTime() + ".mp4"
                         recorder.record();
                         cursorWindow.showMaximized();
                     }
